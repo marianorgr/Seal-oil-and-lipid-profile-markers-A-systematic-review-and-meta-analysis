@@ -1,0 +1,51 @@
+#Package loading - If package is not istalled use the install.package() function before running the command
+library(readxl)
+library(meta)
+library(tidyverse)
+library(metabias)
+library(dmetar)
+library(robvis)
+setwd("Your working directory") #Change "Your working directory" to the direction where the dataset has been downloaded 
+
+#Dataset organization - Creation of dataframe
+read_excel("Data_Seal_oil.xlsx")
+sheet_names3 <- excel_sheets("Data_Seal_oil.xlsx")  #Get sheet names
+sheet_names3
+
+ma3<-lapply(sheet_names3, function(x){
+  as.data.frame(read_excel("mmetho_MD.xlsx",sheet=x))})
+names(ma3)<-sheet_names3
+View(ma3)
+head(ma3)
+names(ma3)
+summary(ma3)
+
+#Meta-analysis - Low-density lipoprotein (LDL)
+m.LDL <- metacont(n.e=ma3$seal_LDL$n.e, mean.e=ma3$seal_LDL$mean.e, sd.e=ma3$seal_LDL$sd.e, n.c=ma3$seal_LDL$n.c, mean.c=ma3$seal_LDL$mean.c, sd.c=ma3$seal_LDL$sd.c,
+                  data = ma3$seal_LDL,
+                  method.tau = "REML",
+                  sm = "MD", studlab = ma3$seal_LDL$Author)
+
+m.LDL
+
+#Meta-analysis - Total cholesterol (TC)
+m.TC <- metacont(n.e=ma3$seal_TC$n.e, mean.e=ma3$seal_TC$mean.e, sd.e=ma3$seal_TC$sd.e, n.c=ma3$seal_TC$n.c, mean.c=ma3$seal_TC$mean.c, sd.c=ma3$seal_TC$sd.c,
+                  data = ma3$seal_TC,
+                  method.tau = "REML",
+                  sm = "MD", studlab = ma3$seal_TC$Author)
+m.TC
+
+#Meta-analysis - High-density lipoprotein (HDL)
+m.HDL <- metacont(n.e=ma3$seal_HDL$n.e, mean.e=ma3$seal_HDL$mean.e, sd.e=ma3$seal_HDL$sd.e, n.c=ma3$seal_HDL$n.c, mean.c=ma3$seal_HDL$mean.c, sd.c=ma3$seal_HDL$sd.c,
+                 data = ma3$seal_HDL,
+                 method.tau = "DL",
+                 sm = "MD", studlab = ma3$seal_HDL$Author)
+m.HDL
+
+#Meta-analysis - Triglycerides (TG)
+m.TG<- metacont(n.e=ma3$seal_TG$n.e, mean.e=ma3$seal_TG$mean.e, sd.e=ma3$seal_TG$sd.e, n.c=ma3$seal_TG$n.c, mean.c=ma3$seal_TG$mean.c, sd.c=ma3$seal_TG$sd.c,
+                     data = ma3$seal_TG,
+                     method.tau = "REML",
+                     sm = "MD", studlab = ma3$seal_TG$Author)
+
+m.TG
